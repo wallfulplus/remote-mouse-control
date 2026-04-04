@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+</head>
+<style>
+    img{
+        margin: auto;
+        padding: 1rem;
+    }
+    #btn{
+        background-color: gray;
+        cursor: pointer;
+    }
+</style>
+<body>
+    <div>you can scan the qrcode to get the control <span id="btn" onclick="window.location.reload();">reload</span></div>
+    
+    <div id="qrcode"></div>
+</body>
+<script>
+
+    const ws = new WebSocket("ws://localhost:8765/");
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("Received:", data);
+        if(data.status !== 0){
+            console.log(data)
+            document.getElementById("qrcode").innerHTML = data.status + " please reload the page";
+            
+        }else{
+            console.log(data)
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: `http://${data.ip}:3000/control/control.html?ip=${data.ip}`,
+                width: 128,
+                height: 128,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+    };
+
+    ws.onerror = (event) => {
+        if(event.type === 'error'){
+            document.getElementById("qrcode").innerHTML = "server not found";
+        }
+    }
+
+
+</script>
+</html>
