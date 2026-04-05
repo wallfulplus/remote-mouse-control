@@ -11,11 +11,43 @@ const releaseleft = document.querySelector('.releaseleft');
 
 const ws = new WebSocket(`ws://${ip}:8765/control`);
 
-const speed = 10
+const speed = 2;
+const TICK = 120;
+const accumulation = TICK/8;
+const packet = {
+    active: {x: 0, y: 0, click: 0}
+};
+const clear = () => {
+    packet.active.x = 0;
+    packet.active.y = 0;
+    packet.active.click = 0;
+}
 
-const press = (mov) => {
+
+setInterval(()=>{
     if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ action: mov }));
+        ws.send(`${packet.active.x} ${packet.active.y} ${packet.active.click}`);
+        clear();
+    }
+}, TICK)
+
+let pressInterval = null;
+const press = (mov) => {
+    packet.active.x += mov.active.x;
+    packet.active.y += mov.active.y;
+    packet.active.click = mov.active.click;
+    if(pressInterval != null){
+        clearInterval(pressInterval);
+    }
+    pressInterval = setInterval(()=>{
+        packet.active.x += mov.active.x;
+        packet.active.y += mov.active.y;
+    }, accumulation);
+}
+
+const stop = () => {
+    if(pressInterval != null){
+        clearInterval(pressInterval);
     }
 }
 
@@ -25,12 +57,25 @@ const bindControl = (element, mov) => {
         e.preventDefault();
         press(mov);
     });
+    element.addEventListener('pointerup', (e) => {
+        e.preventDefault();
+        stop();
+    });
+    element.addEventListener('pointerleave', (e) => {
+        e.preventDefault();
+        stop();
+    });
+    element.addEventListener('pointercancel', (e) => {
+        e.preventDefault();
+        stop();
+    });
 };
 
-bindControl(up, { x: 0, y: -speed, click: '' });
-bindControl(down, { x: 0, y: speed, click: '' });
-bindControl(left, { x: -speed, y: 0, click: '' });
-bindControl(right, { x: speed, y: 0, click: '' });
-bindControl(clickLeft, { x: 0, y: 0, click: 'click' });
-bindControl(releaseleft, { x: 0, y: 0, click: 'release' });
+bindControl(up, {active: {x: 0, y: -speed, click: 0}});
+bindControl(down, {active: {x: 0, y: speed, click: 0}});
+bindControl(left, {active: {x: -speed, y: 0, click: 0}});
+bindControl(right, {active: {x: speed, y: 0, click: 0}});
+bindControl(clickLeft, {active: {x: 0, y: 0, click: 1}});
+// 還沒想好要幹嘛
+bindControl(releaseleft, `0 0 0`);
 

@@ -22,4 +22,4 @@ class Control:
             pyautogui.mouseUp(button='left')
 
     def update(self):
-        pyautogui.moveTo(self.mouseX, self.mouseY)
+        pyautogui.moveTo(self.mouseX, self.mouseY, duration=0.1)

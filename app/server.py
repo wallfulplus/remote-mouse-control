@@ -16,12 +16,11 @@ async def handler(ws):
         else:
             await ws.send(json.dumps({"status": "server Error[1]", "ip": ip}))
     if path =="/control":
-        async for msg in ws:    
-            data = json.loads(msg)    
-            action = data['action']
-            control.move(action['x'], action['y'])
+        async for msg in ws:
+            data = msg.split(' ')
+            control.move(int(data[0]), int(data[1]))
             control.update()
-            if action['click'] == 'click':
+            if int(data[2]) == 1:
                 control.clickLeft(True)
 
 

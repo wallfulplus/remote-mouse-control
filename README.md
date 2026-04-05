@@ -6,7 +6,7 @@ This project is a simple mobile remote control system. By using a local Python W
 
 ---
 
-## 功能概述
+## Describe
 
 - 啟動 Python WebSocket 伺服器
 Python WebSocket Server establishes a real-time communication channel.
@@ -33,3 +33,7 @@ The server executes mouse actions using pyautogui
 open [http://localhost:3000/index.html](http://localhost:3000/index.html)
 use mobile scan into it
 
+---
+
+## Demo
+[遠端控制滑鼠 demo](https://www.youtube.com/watch?v=tWC5Qr4Vks4)
