@@ -17,12 +17,6 @@ const accumulation = TICK/8;
 const packet = {
     active: {x: 0, y: 0, click: 0}
 };
-const clear = () => {
-    packet.active.x = 0;
-    packet.active.y = 0;
-    packet.active.click = 0;
-}
-
 
 setInterval(()=>{
     if (ws.readyState === WebSocket.OPEN) {
@@ -30,6 +24,12 @@ setInterval(()=>{
         clear();
     }
 }, TICK)
+
+const clear = () => {
+    packet.active.x = 0;
+    packet.active.y = 0;
+    packet.active.click = 0;
+}
 
 let pressInterval = null;
 const press = (mov) => {
